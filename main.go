@@ -16,6 +16,8 @@ func main() {
 		fmt.Fprint(w, "TESTTT")
 	})
 
-	log.Println("Server Started @ 8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	port := 5151
+	log.Printf("Server Started @ %d\n", port)
+
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), router))
 }
