@@ -435,11 +435,22 @@ var addressPoints = [
 [-37.8194342167, 175.22322975, "9"]
 ];
 
+
+var gopherIcon = L.icon({
+  iconUrl: './assets/img/gopher-icon.png',
+  iconSize: [70, 70],
+  iconAnchor: [22, 94],
+  popupAnchor: [-3, -76],
+  shadowSize: [68, 95],
+  shadowAnchor: [22, 94]
+});
+
+
 for (var i = 0; i < addressPoints.length; i++) {
     var a = addressPoints[i];
     var title = a[2];
     var marker = L.marker(new L.LatLng(a[0], a[1]), {
-        icon: L.mapbox.marker.icon({'marker-symbol': 'post', 'marker-color': '0044FF'}),
+        icon: gopherIcon,
         title: title
     });
     marker.bindPopup(title);
