@@ -1,0 +1,1 @@
+web: globegala -logtostderr=true
