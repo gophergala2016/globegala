@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -44,7 +45,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	fmt.Fprint(w, string(data[:len(data)]))
 }
 
-func GetGithubContributors(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	repos, err := github.FetchAllRepos()
 	if err != nil {
 		log.Fatal("err", err)
@@ -84,7 +85,12 @@ func GetGithubContributors(w http.ResponseWriter, r *http.Request, _ httprouter.
 		allReposData.data = append(allReposData.data, repoData)
 	}
 
-	fmt.Println(allReposData)
+	jsonRepo, err := json.MarshalIndent(allReposData.data, "", "\t")
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+
+	fmt.Fprint(w, string(jsonRepo[:len(jsonRepo)]))
 }
 
 //func Repo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {

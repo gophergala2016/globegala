@@ -21,7 +21,7 @@ func main() {
 	router.ServeFiles("/static/*filepath", http.Dir("static"))
 
 	router.GET("/", handlers.Index)
-	router.GET("/github/contributors", handlers.GetGithubContributors)
+	router.GET("/github/repos", handlers.GetGithubRepos)
 
 	router.GET("/test", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		fmt.Fprint(w, "Test")
