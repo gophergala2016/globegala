@@ -5,6 +5,8 @@
 <title>Listing markers in clusters</title>
 <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
 <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
 <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
 <style>
   body { margin:0; padding:0; }
@@ -20,27 +22,44 @@
 pre.ui-coordinates {
   background:rgba(0,0,0,0.5);
   position:absolute;
-  bottom:10px;
+  /*bottom:50px;*/
+  top: 80px;
   left:10px;
   padding:5px 10px;
   color:#fff;
   font-size:11px;
   line-height:18px;
   border-radius:3px;
-  max-height:240px;
+  max-height:600px;
+  /*min-height:100px;*/
   overflow:auto;
   width:100px;
   }
 </style>
 
 <div id='map'></div>
-<pre id='coordinates' class='ui-coordinates'></pre>
+<pre id='sidebar' class='ui-coordinates'></pre>
 
 <script src="/mapbox.js/assets/data/realworld.388.js"></script>
 <script>
 L.mapbox.accessToken = 'pk.eyJ1IjoidGhlbGxpbWlzdCIsImEiOiJjaWpyZzd6em4wYTg0dTRtNXY3aTczM3hhIn0.O6IJzLVf29chqu3Zw8ioJQ';
 var map = L.mapbox.map('map', 'mapbox.streets')
     .setView([-37.82, 175.215], 14);;
+
+$.ajax({
+   url: 'http://api.joind.in/v2.1/talks/10889',
+   data: {
+      format: 'json'
+   },
+   error: function() {
+      console.log("Error");
+      //$('#info').html('<p>An error has occurred</p>');
+   },
+   success: function(data) {
+      console.log("SUCESS", data);
+   },
+   type: 'GET'
+});
 
 var markers = new L.MarkerClusterGroup();
 
@@ -471,7 +490,14 @@ function onmove() {
         }
     });
     // Display a list of markers.
-    document.getElementById('coordinates').innerHTML = inBounds.join('\n');
+    var sidebarItems = "";
+    if (inBounds.length == 0) {
+      sidebarItems = "No gopher here";
+    } else {
+      sidebarItems = inBounds.join('\n');
+    }
+
+    document.getElementById('sidebar').innerHTML = sidebarItems;
 }
 
 map.on('move', onmove);
