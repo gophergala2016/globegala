@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"path/filepath"
 
 	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	"github.com/gophergala2016/globegala/github"
@@ -19,6 +21,29 @@ type RepoData struct {
 }
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	uri := r.URL.Path
+	if uri == "/" {
+		uri = "index.html"
+	}
+	path := filepath.Join("static", uri)
+
+	data, err := ioutil.ReadFile(path)
+
+	if err != nil {
+		log.Printf("ioutil.ReadFile('%s') failed with '%s'\n", path, err)
+		fmt.Fprint(w, err.Error())
+		return
+	}
+
+	if len(data) == 0 {
+		fmt.Fprint(w, "Asset is empty")
+		return
+	}
+
+	fmt.Fprint(w, string(data[:len(data)]))
+}
+
+func GetGithubContributors(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	repos, err := github.FetchAllRepos()
 	if err != nil {
 		log.Fatal("err", err)

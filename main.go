@@ -17,9 +17,14 @@ func main() {
 	}
 
 	router := httprouter.New()
+
+	router.ServeFiles("/static/*filepath", http.Dir("static"))
+
 	router.GET("/", handlers.Index)
+	router.GET("/github/contributors", handlers.GetGithubContributors)
+
 	router.GET("/test", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		fmt.Fprint(w, "TESTTT")
+		fmt.Fprint(w, "Test")
 	})
 
 	log.Printf("Server Started @ %s\n", port)
