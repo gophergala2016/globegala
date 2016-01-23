@@ -5,20 +5,29 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"os"
 )
 
-var githubAPI = "https://api.github.com"
+var (
+	githubAPI   = "https://api.github.com"
+	accessToken = os.Getenv("access_token")
+)
 
 type Repos []struct {
 	Name string `json:"name"`
 }
 
 type Contributors []struct {
-	Login string
+	Login string `json:"login"`
+}
+
+type Contributor struct {
+	Login    string `json:"login"`
+	Location string `json: "location"`
 }
 
 func FetchAllRepos() (Repos, error) {
-	reqUrl := githubAPI + "/orgs/gophergala2016/repos"
+	reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s", githubAPI, accessToken)
 
 	var repos Repos
 	respBody, err := doGetRequest(reqUrl)
@@ -33,21 +42,38 @@ func FetchAllRepos() (Repos, error) {
 	return repos, nil
 }
 
-//func FetchAllContributors(repo string) (*Contributors, error) {
-//	reqUrl := fmt.Sprintf("%s/repos/gophergala2016/%s/contributors", githubAPI, repo)
-//
-//	respBody, err := doGetRequest(reqUrl)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	var c *Contributors
-//	if err := json.Unmarshal(respBody, c); err != nil {
-//		return nil, fmt.Errorf("Unmarshal error: %v", err)
-//	}
-//
-//	return c, nil
-//}
+func FetchAllContributors(repo string) (Contributors, error) {
+	reqUrl := fmt.Sprintf("%s/repos/gophergala2016/%s/contributors?access_token=%s", githubAPI, repo, accessToken)
+
+	respBody, err := doGetRequest(reqUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	var c Contributors
+	if err := json.Unmarshal(respBody, &c); err != nil {
+		return nil, fmt.Errorf("Unmarshal error: %v", err)
+	}
+
+	return c, nil
+}
+
+func FetchContributor(contributor string) (Contributor, error) {
+	reqUrl := fmt.Sprintf("%s/users/%s?access_token=%s", githubAPI, contributor, accessToken)
+
+	var c Contributor
+	respBody, err := doGetRequest(reqUrl)
+	if err != nil {
+		return c, err
+	}
+
+	if err := json.Unmarshal(respBody, &c); err != nil {
+		return c, fmt.Errorf("Unmarshal error: %v", err)
+	}
+	fmt.Println(string(respBody))
+
+	return c, nil
+}
 
 func doGetRequest(reqUrl string) ([]byte, error) {
 	client := http.DefaultClient
