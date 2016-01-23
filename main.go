@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	"github.com/gophergala2016/globegala/handlers"
-	"github.com/julienschmidt/httprouter"
 )
 
 func main() {

@@ -1,0 +1,11 @@
+{
+	"ImportPath": "github.com/gophergala2016/globegala",
+	"GoVersion": "go1.5",
+	"Deps": [
+		{
+			"ImportPath": "github.com/julienschmidt/httprouter",
+			"Comment": "v1-37-gb55664b",
+			"Rev": "b55664b9e92004aebb7f19a19a9d06271f3a41fc"
+		}
+	]
+}
