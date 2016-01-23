@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 
@@ -11,7 +12,10 @@ import (
 func main() {
 	router := httprouter.New()
 	router.GET("/", handlers.Index)
-	//	router.GET("/:repo", handlers.Repo)
+	router.GET("/test", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+		fmt.Fprint(w, "TESTTT")
+	})
 
+	log.Println("Server Started @ 8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
 }
