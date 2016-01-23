@@ -5,8 +5,8 @@ import (
 	//	"log"
 	"net/http"
 
+	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	"github.com/gophergala2016/globegala/github"
-	"github.com/julienschmidt/httprouter"
 )
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
