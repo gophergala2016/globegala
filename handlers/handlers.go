@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 
 	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
+	"github.com/gophergala2016/globegala/geocoding"
 	"github.com/gophergala2016/globegala/github"
 )
 
@@ -68,7 +69,15 @@ func GetGithubContributors(w http.ResponseWriter, r *http.Request, _ httprouter.
 				fmt.Printf("FetchContributor: %v", err)
 			}
 
+			g, err := geocoding.FetchLatLong(c.Location)
+			if err != nil {
+				fmt.Printf("FetchLatLong: %v", err)
+			}
+			c.Geolocation = g
+
 			repoData.Contributors = append(repoData.Contributors, c)
+
+			fmt.Printf("%+v", repoData.Contributors)
 		}
 		repoData.Name = repo.Name
 

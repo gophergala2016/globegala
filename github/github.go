@@ -6,6 +6,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+
+	"github.com/gophergala2016/globegala/geocoding"
 )
 
 var (
@@ -23,7 +25,9 @@ type Contributors []struct {
 
 type Contributor struct {
 	Login    string `json:"login"`
-	Location string `json: "location"`
+	Location string `json:"location"`
+
+	Geolocation geocoding.Geolocation
 }
 
 func FetchAllRepos() (Repos, error) {
@@ -94,6 +98,3 @@ func doGetRequest(reqUrl string) ([]byte, error) {
 
 	return body, nil
 }
-
-//func GetContributorLocation() {
-//}
