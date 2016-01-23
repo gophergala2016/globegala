@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta charset=utf-8 />
-    <title>Listing markers in clusters</title>
+    <title>GlobeGala</title>
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
@@ -36,11 +36,11 @@
     </style>
     <div id='map'></div>
     <pre id='sidebar' class='ui-coordinates'></pre>
-    <script src="/mapbox.js/assets/data/realworld.388.js"></script>
     <script>
+      var initialLocation = [-37.82, 175.215];
+
       L.mapbox.accessToken = 'pk.eyJ1IjoidGhlbGxpbWlzdCIsImEiOiJjaWpyZzd6em4wYTg0dTRtNXY3aTczM3hhIn0.O6IJzLVf29chqu3Zw8ioJQ';
-      var map = L.mapbox.map('map', 'mapbox.streets')
-          .setView([-37.82, 175.215], 14);;
+      var map = L.mapbox.map('map', 'mapbox.pirates').setView(initialLocation, 14);;
 
       $.ajax({
          url: 'http://api.joind.in/v2.1/talks/10889',
@@ -452,7 +452,7 @@
 
 
       var gopherIcon = L.icon({
-        iconUrl: './assets/img/gopher-icon.png',
+        iconUrl: './assets/img/gopherpirate-icon.png',
         iconSize: [70, 70],
         iconAnchor: [22, 94],
         popupAnchor: [-3, -76],
