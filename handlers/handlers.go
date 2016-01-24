@@ -59,14 +59,14 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 
 	allReposData := AllReposData{}
 
-	var wg sync.WaitGroup
-	wg.Add(len(repos))
+	var wg1 sync.WaitGroup
+	wg1.Add(len(repos))
 
 	for i := range repos {
 		repoData := RepoData{}
 		repo := repos[i]
 		go func() {
-			defer wg.Done()
+			defer wg1.Done()
 			contributors, err := github.FetchAllContributors(repo.Name)
 			if err != nil {
 				//				fmt.Printf("FetchAllContributors: %v", err)
@@ -76,13 +76,13 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 				return
 			}
 
-			var wg sync.WaitGroup
-			wg.Add(len(contributors))
+			var wg2 sync.WaitGroup
+			wg2.Add(len(contributors))
 			for i := range contributors {
 				contributor := contributors[i]
 
 				go func() {
-					defer wg.Done()
+					defer wg2.Done()
 
 					c, err := github.FetchContributor(contributor.Login)
 					if err != nil {
@@ -99,17 +99,17 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 				}()
 			}
 
-			wg.Wait()
+			wg2.Wait()
 			repoData.Name = repo.Name
 
 			allReposData.data = append(allReposData.data, repoData)
 		}()
 	}
 
-	wg.Wait()
+	wg1.Wait()
 
 	//fmt.Println(allReposData)
-	jsonRepo, err := json.Marshal(allReposData.data, "", "\t")
+	jsonRepo, err := json.Marshal(allReposData.data)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
