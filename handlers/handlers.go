@@ -90,7 +90,6 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 				c.Geolocation = g
 
 				repoData.Contributors = append(repoData.Contributors, c)
-				wg.Done()
 			}()
 		}
 
@@ -106,7 +105,7 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 		fmt.Println("error:", err)
 	}
 
-	fmt.Printf("Passed Time %v:", time.Since(start))
+	fmt.Printf("Passed Time: %v\n", time.Since(start))
 
 	fmt.Fprint(w, string(jsonRepo[:len(jsonRepo)]))
 }
