@@ -48,16 +48,33 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	jsonRepo, err := ioutil.ReadFile("map_data.json")
+	if err != nil {
+		allReposData := getDataFromAPI()
+		//fmt.Println(allReposData)
+		jsonRepo, err = json.MarshalIndent(allReposData.data, "", "\t")
+		if err != nil {
+			fmt.Println("error:", err)
+		}
+
+		if err := ioutil.WriteFile("map_data.json", jsonRepo, 0777); err != nil {
+			fmt.Println("writefile err: ", err)
+		}
+	}
+
+	fmt.Fprint(w, string(jsonRepo[:len(jsonRepo)]))
+}
+
+func getDataFromAPI() AllReposData {
 	start := time.Now()
 	fmt.Printf("Called GetGithubRepos\n")
+	allReposData := AllReposData{}
 
 	repos, err := github.FetchAllRepos()
 	if err != nil {
 		fmt.Printf("Couldn't fetch repos: %v", err.Error())
-		return
+		return allReposData
 	}
-
-	allReposData := AllReposData{}
 
 	for i := range repos {
 		repoData := RepoData{}
@@ -99,25 +116,7 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 
 		allReposData.data = append(allReposData.data, repoData)
 	}
-
-	//fmt.Println(allReposData)
-	jsonRepo, err := json.MarshalIndent(allReposData.data, "", "\t")
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-
 	fmt.Printf("Passed Time: %v\n", time.Since(start))
 
-	fmt.Fprint(w, string(jsonRepo[:len(jsonRepo)]))
+	return allReposData
 }
-
-//func Reio(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-//	repo := ps.ByName("repo")
-//
-//	contributors, err := github.FetchAllContributors(repo)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//
-//	fmt.Fprintf(w, "hello %s", &contributors.Contributor[0].Login)
-//}
