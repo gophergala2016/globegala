@@ -52,9 +52,9 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 	}
 
 	allReposData := AllReposData{}
-	repoData := RepoData{}
 
 	for i := range repos {
+		repoData := RepoData{}
 		repo := repos[i]
 		contributors, err := github.FetchAllContributors(repo.Name)
 		if err != nil {
