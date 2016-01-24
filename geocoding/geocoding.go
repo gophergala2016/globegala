@@ -26,10 +26,8 @@ type Geolocation struct {
 func FetchLatLong(address string) (Geolocation, error) {
 	url := url.Values{}
 	url.Set("address", address)
-	fmt.Println("THE ADDRESS IS ", address)
 
 	reqUrl := fmt.Sprintf("%s?%s", geolocationAPI, url.Encode())
-	fmt.Printf("THE REQURL is %s", reqUrl)
 
 	var g Geolocation
 	respBody, err := doGetRequest(reqUrl, "")

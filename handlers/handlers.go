@@ -49,6 +49,7 @@ func GetGithubContributors(w http.ResponseWriter, r *http.Request, _ httprouter.
 	if err != nil {
 		log.Fatal("err", err)
 	}
+	fmt.Fprintf(w, "%+v", repos)
 
 	var allReposData AllReposData
 	var repoData RepoData
