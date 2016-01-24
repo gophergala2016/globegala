@@ -24,6 +24,7 @@
       top: 80px;
       left:10px;
       padding:5px 10px;
+      margin-bottom: 50px;
       color:#fff;
       font-size:11px;
       line-height:18px;
@@ -37,27 +38,8 @@
     <div id='map'></div>
     <pre id='sidebar' class='ui-coordinates'></pre>
     <script>
-      var initialLocation = [-37.82, 175.215];
 
-      L.mapbox.accessToken = 'pk.eyJ1IjoidGhlbGxpbWlzdCIsImEiOiJjaWpyaTU1OHowYXludW9seGJwd3RxcmFqIn0.sOxVgIVh_fn3RALCUSd7PQ';
-      var map = L.mapbox.map('map', 'mapbox.pirates').setView(initialLocation, 14);;
 
-      $.ajax({
-         url: 'github/contributors',
-         data: {
-            format: 'json'
-         },
-         error: function() {
-            console.log("Error");
-            //$('#info').html('<p>An error has occurred</p>');
-         },
-         success: function(data) {
-            console.log("SUCESS", data);
-         },
-         type: 'GET'
-      });
-
-      var markers = new L.MarkerClusterGroup();
 
       var addressPoints = [
       [-37.8210922667, 175.2209316333, "2"],
@@ -453,28 +435,15 @@
       ];
 
 
-      var gopherIcon = L.icon({
-        iconUrl: './assets/img/gopherpirate-icon.png',
-        iconSize: [70, 70],
-        iconAnchor: [22, 94],
-        popupAnchor: [-3, -76],
-        shadowSize: [68, 95],
-        shadowAnchor: [22, 94]
-      });
 
 
-      for (var i = 0; i < addressPoints.length; i++) {
-          var a = addressPoints[i];
-          var title = a[2];
-          var marker = L.marker(new L.LatLng(a[0], a[1]), {
-              icon: gopherIcon,
-              title: title
-          });
-          marker.bindPopup(title);
-          markers.addLayer(marker);
-      }
 
-      map.addLayer(markers);
+
+      var initialLocation = [-37.82, 175.215];
+
+      L.mapbox.accessToken = 'pk.eyJ1IjoidGhlbGxpbWlzdCIsImEiOiJjaWpyaTU1OHowYXludW9seGJwd3RxcmFqIn0.sOxVgIVh_fn3RALCUSd7PQ';
+      var map = L.mapbox.map('map', 'mapbox.pirates').setView(initialLocation, 14);;
+      var markers = new L.MarkerClusterGroup();
 
       function onmove() {
           // Get the map bounds - the top-left and bottom-right locations.
@@ -498,7 +467,72 @@
           document.getElementById('sidebar').innerHTML = sidebarItems;
       }
 
+      var gopherIcon = L.icon({
+        iconUrl: './assets/img/gopherpirate-icon.png',
+        iconSize: [70, 70],
+        iconAnchor: [22, 94],
+        popupAnchor: [-3, -76],
+        shadowSize: [68, 95],
+        shadowAnchor: [22, 94]
+      });
+
       map.on('move', onmove);
+
+      $.ajax({
+         url: 'http://localhost:8080/github/repos',
+         data: {
+            format: 'json'
+         },
+         error: function() {
+            console.log("Error");
+            //$('#info').html('<p>An error has occurred</p>');
+         },
+         success: function(data) {
+            console.log("SUCESSS", data);
+
+            data = JSON.parse(data);
+            var markerData = [];
+
+            for (var i = 0; i < data.length; i++) {
+                  var repoName = data[i]["Name"];
+                  var contributors = data[i]["Contributors"];
+
+                  for (var j = 0; j < contributors.length; j++) {
+                        var loginName = contributors[j]["login"];
+                        var location = contributors[j]["locationName"]; // Not used
+
+                        if (contributors[j]["Geolocation"]["Results"].length > 0) {
+                              var lat = contributors[j]["Geolocation"]["Results"][0]["Geometry"]["Location"]["lat"];
+                              var lng = contributors[j]["Geolocation"]["Results"][0]["Geometry"]["Location"]["lng"];
+
+                              // console.log("repoName", repoName," loginName ", loginName, " i ", i, " j ", j);
+
+                              markerData.push([lat, lng, repoName + " - " + loginName]);
+                        }
+
+                  };
+            };
+
+            console.log("MARKER DATA ", JSON.stringify(markerData));
+
+            for (var i = 0; i < markerData.length; i++) {
+                var a = markerData[i];
+                var title = a[2];
+                var marker = L.marker(new L.LatLng(a[0], a[1]), {
+                    icon: gopherIcon,
+                    title: title
+                });
+                marker.bindPopup(title);
+                markers.addLayer(marker);
+            }
+
+            map.addLayer(markers);
+
+            // Force refresh
+            onmove();
+         },
+         type: 'GET'
+      });
 
       // call onmove off the bat so that the list is populated.
       // otherwise, there will be no markers listed until the map is moved.
