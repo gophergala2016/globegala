@@ -83,7 +83,6 @@ func FetchContributor(contributor string) (Contributor, error) {
 	if err := json.Unmarshal(respBody, &c); err != nil {
 		return c, fmt.Errorf("Unmarshal error: %v", err)
 	}
-	fmt.Println(string(respBody))
 
 	return c, nil
 }

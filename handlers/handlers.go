@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"sync"
 
 	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	"github.com/gophergala2016/globegala/geocoding"
@@ -58,15 +59,17 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 		repo := repos[i]
 		contributors, err := github.FetchAllContributors(repo.Name)
 		if err != nil {
-			fmt.Printf("FetchAllContributors: %v", err)
+			//			fmt.Printf("FetchAllContributors: %v", err)
 		}
 
 		if len(contributors) == 0 {
 			continue
 		}
 
+		var wg sync.WaitGroup
 		for i := range contributors {
 			contributor := contributors[i]
+			wg.Add(1)
 			go func() {
 				c, err := github.FetchContributor(contributor.Login)
 				if err != nil {
@@ -80,10 +83,11 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 				c.Geolocation = g
 
 				repoData.Contributors = append(repoData.Contributors, c)
+				wg.Done()
 			}()
 		}
+		wg.Wait()
 		repoData.Name = repo.Name
-		fmt.Fprintf(w, "%+v", repoData.Contributors)
 
 		allReposData.data = append(allReposData.data, repoData)
 	}
