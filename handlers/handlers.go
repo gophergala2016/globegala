@@ -59,49 +59,57 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 
 	allReposData := AllReposData{}
 
+	var wg sync.WaitGroup
+	wg.Add(len(repos))
+
 	for i := range repos {
 		repoData := RepoData{}
 		repo := repos[i]
-		contributors, err := github.FetchAllContributors(repo.Name)
-		if err != nil {
-			//			fmt.Printf("FetchAllContributors: %v", err)
-		}
+		go func() {
+			defer wg.Done()
+			contributors, err := github.FetchAllContributors(repo.Name)
+			if err != nil {
+				//				fmt.Printf("FetchAllContributors: %v", err)
+			}
 
-		if len(contributors) == 0 {
-			continue
-		}
+			if len(contributors) == 0 {
+				return
+			}
 
-		var wg sync.WaitGroup
-		wg.Add(len(contributors))
-		for i := range contributors {
-			contributor := contributors[i]
+			var wg sync.WaitGroup
+			wg.Add(len(contributors))
+			for i := range contributors {
+				contributor := contributors[i]
 
-			go func() {
-				defer wg.Done()
+				go func() {
+					defer wg.Done()
 
-				c, err := github.FetchContributor(contributor.Login)
-				if err != nil {
-					fmt.Printf("FetchContributor: %v", err)
-				}
+					c, err := github.FetchContributor(contributor.Login)
+					if err != nil {
+						fmt.Printf("FetchContributor: %v", err)
+					}
 
-				g, err := geocoding.FetchLatLong(c.Location)
-				if err != nil {
-					fmt.Printf("FetchLatLong: %v", err)
-				}
-				c.Geolocation = g
+					g, err := geocoding.FetchLatLong(c.Location)
+					if err != nil {
+						fmt.Printf("FetchLatLong: %v", err)
+					}
+					c.Geolocation = g
 
-				repoData.Contributors = append(repoData.Contributors, c)
-			}()
-		}
+					repoData.Contributors = append(repoData.Contributors, c)
+				}()
+			}
 
-		wg.Wait()
-		repoData.Name = repo.Name
+			wg.Wait()
+			repoData.Name = repo.Name
 
-		allReposData.data = append(allReposData.data, repoData)
+			allReposData.data = append(allReposData.data, repoData)
+		}()
 	}
 
+	wg.Wait()
+
 	//fmt.Println(allReposData)
-	jsonRepo, err := json.MarshalIndent(allReposData.data, "", "\t")
+	jsonRepo, err := json.Marshal(allReposData.data, "", "\t")
 	if err != nil {
 		fmt.Println("error:", err)
 	}
