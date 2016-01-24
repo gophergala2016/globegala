@@ -109,7 +109,7 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 	wg.Wait()
 
 	//fmt.Println(allReposData)
-	jsonRepo, err := json.MarshalIndent(allReposData.data, "", "\t")
+	jsonRepo, err := json.Marshal(allReposData.data)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
