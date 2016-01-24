@@ -22,7 +22,7 @@
       background:rgba(0,0,0,0.5);
       position:absolute;
       /*bottom:50px;*/
-      top: 80px;
+      top: 120px;
       left:10px;
       padding:5px 10px;
       margin-bottom: 50px;
@@ -30,8 +30,24 @@
       font-size:11px;
       line-height:18px;
       border-radius:3px;
-      max-height:600px;
+      max-height:400px;
       /*min-height:100px;*/
+      overflow:auto;
+      max-width:200px;
+      }
+
+      p.label-pos {
+      background:rgba(0,0,0,0.8);
+      position:absolute;
+      /*bottom:50px;*/
+      top: 80px;
+      left:10px;
+      padding:5px 10px;
+      margin-bottom: 50px;
+      color:#fff;
+      font-size:12px;
+      line-height:18px;
+      border-radius:3px;
       overflow:auto;
       max-width:200px;
       }
@@ -54,6 +70,7 @@
     </style>
     <div id='map'></div>
     <pre id='sidebar' class='ui-coordinates'></pre>
+    <p id='title' class='label-pos'></p>
     <button onclick='fit();' id='fit'>Go to Gopher Treasure Hunt!</button>
 
 
@@ -491,10 +508,11 @@
                         if(a.toLowerCase() > b.toLowerCase()) return 1;
                         return 0;
                   });
-                  sidebarItems = inBounds.join('\n');
+                  sidebarItems = "Repo - Contributor\n================\n" + inBounds.join('\n');
             }
 
             document.getElementById('sidebar').innerHTML = sidebarItems;
+            document.getElementById('title').innerHTML = "Nearby Gophers";
       }
 
       var gopherIcon = L.icon({
