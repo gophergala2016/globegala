@@ -49,10 +49,9 @@ func GetGithubContributors(w http.ResponseWriter, r *http.Request, _ httprouter.
 	if err != nil {
 		log.Fatal("err", err)
 	}
-	fmt.Fprintf(w, "%+v", repos)
 
-	var allReposData AllReposData
-	var repoData RepoData
+	allReposData := AllReposData{}
+	repoData := RepoData{}
 
 	for _, repo := range repos {
 		contributors, err := github.FetchAllContributors(repo.Name)
@@ -78,17 +77,17 @@ func GetGithubContributors(w http.ResponseWriter, r *http.Request, _ httprouter.
 
 			repoData.Contributors = append(repoData.Contributors, c)
 
-			fmt.Printf("%+v", repoData.Contributors)
 		}
 		repoData.Name = repo.Name
+		fmt.Fprintf(w, "%+v", repoData.Contributors)
 
 		allReposData.data = append(allReposData.data, repoData)
 	}
 
-	fmt.Println(allReposData)
+	//fmt.Println(allReposData)
 }
 
-//func Repo(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+//func Reio(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
 //	repo := ps.ByName("repo")
 //
 //	contributors, err := github.FetchAllContributors(repo)
