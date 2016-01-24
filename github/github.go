@@ -11,7 +11,8 @@ import (
 )
 
 var (
-	githubAPI   = "https://api.github.com"
+	githubAPI = "https://api.github.com"
+
 	accessToken = os.Getenv("access_token")
 )
 
@@ -32,11 +33,10 @@ type Contributor struct {
 
 func FetchAllRepos() (Repos, error) {
 	var allRepos Repos
-	pageNum := 1
 
-	for i := 0; i < 7; i++ {
+	for page := 1; page <= 7; page++ {
 		var repos Repos
-		reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s&page=%v", githubAPI, accessToken, pageNum)
+		reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s&page=%v", githubAPI, accessToken, page)
 
 		respBody, err := doGetRequest(reqUrl)
 		if err != nil {
@@ -48,8 +48,6 @@ func FetchAllRepos() (Repos, error) {
 		}
 
 		allRepos = append(allRepos, repos...)
-
-		pageNum += 1
 	}
 
 	return allRepos, nil
