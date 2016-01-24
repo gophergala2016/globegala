@@ -50,6 +50,7 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 	if err != nil {
 		log.Fatal("err", err)
 	}
+	fmt.Fprintf(w, "%+v", repos)
 
 	var allReposData AllReposData
 	var repoData RepoData

@@ -31,19 +31,28 @@ type Contributor struct {
 }
 
 func FetchAllRepos() (Repos, error) {
-	reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s", githubAPI, accessToken)
+	var allRepos Repos
+	pageNum := 1
 
-	var repos Repos
-	respBody, err := doGetRequest(reqUrl)
-	if err != nil {
-		return repos, err
+	for i := 0; i < 7; i++ {
+		var repos Repos
+		reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s&page=%v", githubAPI, accessToken, pageNum)
+
+		respBody, err := doGetRequest(reqUrl)
+		if err != nil {
+			return repos, err
+		}
+
+		if err := json.Unmarshal(respBody, &repos); err != nil {
+			return repos, fmt.Errorf("Unmarshal error: ", err)
+		}
+
+		allRepos = append(allRepos, repos...)
+
+		pageNum += 1
 	}
 
-	if err := json.Unmarshal(respBody, &repos); err != nil {
-		return repos, fmt.Errorf("Unmarshal error: ", err)
-	}
-
-	return repos, nil
+	return allRepos, nil
 }
 
 func FetchAllContributors(repo string) (Contributors, error) {
