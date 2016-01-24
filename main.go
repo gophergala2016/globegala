@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
+	"github.com/gophergala2016/globegala/github"
 	"github.com/gophergala2016/globegala/handlers"
 )
 
@@ -15,6 +16,8 @@ func main() {
 	if port == "" {
 		port = "8080"
 	}
+
+	github.CacheInit()
 
 	router := httprouter.New()
 

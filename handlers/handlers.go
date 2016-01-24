@@ -49,6 +49,7 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 
 func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	start := time.Now()
+	fmt.Printf("Called GetGithubRepos\n")
 
 	repos, err := github.FetchAllRepos()
 	if err != nil {

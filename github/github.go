@@ -8,11 +8,14 @@ import (
 	"os"
 
 	"github.com/gophergala2016/globegala/geocoding"
+	"github.com/gregjones/httpcache"
 )
 
 var (
 	githubAPI   = "https://api.github.com"
 	accessToken = os.Getenv("access_token")
+
+	client http.Client
 )
 
 type Repos []struct {
@@ -28,6 +31,11 @@ type Contributor struct {
 	Location string `json:"location"`
 
 	Geolocation geocoding.Geolocation
+}
+
+func CacheInit() {
+	t := httpcache.NewMemoryCacheTransport()
+	client = http.Client{Transport: t}
 }
 
 func FetchAllRepos() (Repos, error) {
@@ -88,7 +96,6 @@ func FetchContributor(contributor string) (Contributor, error) {
 }
 
 func doGetRequest(reqUrl string) ([]byte, error) {
-	client := http.DefaultClient
 	req, err := http.NewRequest("GET", reqUrl, nil)
 	if err != nil {
 		return nil, fmt.Errorf("http.NewRequest error: %v", err)
