@@ -37,24 +37,24 @@
       }
 
       #fit {
-            display: block;
-            position: relative;
-            margin: 0px auto;
-            margin-top: 15px;
-            width: 35%;
-            height: 40px;
-            padding: 10px;
-            border: none;
-            border-radius: 3px;
-            font-size: 12px;
-            text-align: center;
-            color: #fff;
-            background: #ee8a65;
+          display: block;
+          position: relative;
+          margin: 0px auto;
+          margin-top: 15px;
+          height: 40px;
+          font-size: 14;
+          padding: 10px 50px;
+          border: none;
+          border-radius: 3px;
+          font-size: 17px;
+          text-align: center;
+          color: #fff;
+          background: #ee8a65;
       }
     </style>
     <div id='map'></div>
     <pre id='sidebar' class='ui-coordinates'></pre>
-    <button onclick='fit();' id='fit'>Find Lost Pirates!</button>
+    <button onclick='fit();' id='fit'>Go to Gopher Treasure Hunt!</button>
 
 
 
@@ -462,7 +462,8 @@
 
       var initialLocation = [38.626664, -21.221672];
       var pirateBaseLocations = [-17.705651, 79.362737];
-      var pirateMapURL = 'http://static1.textcraft.net/data1/5/a/5a396bbb7b69098c70b2b82a5680c43e800e5e5bda39a3ee5e6b4b0d3255bfef95601890afd80709da39a3ee5e6b4b0d3255bfef95601890afd807094dcdb6072a800c0d1843cdc1a3708e65.png'//'http://www.treasurenet.com/forums/attachment.php?attachmentid=874164&d=1380678885';
+      var pirateMapURL = 'http://static1.textcraft.net/data1/5/a/5a396bbb7b69098c70b2b82a5680c43e800e5e5bda39a3ee5e6b4b0d3255bfef95601890afd80709da39a3ee5e6b4b0d3255bfef95601890afd807094dcdb6072a800c0d1843cdc1a3708e65.png'
+      var subTextURL = 'http://static1.textcraft.net/data1/f/4/f4a1d0a3554e019923334b51bee2b71c9815e841da39a3ee5e6b4b0d3255bfef95601890afd80709da39a3ee5e6b4b0d3255bfef95601890afd807094dcdb6072a800c0d1843cdc1a3708e65.png'
 
       L.mapbox.accessToken = 'pk.eyJ1IjoidGhlbGxpbWlzdCIsImEiOiJjaWpyaTU1OHowYXludW9seGJwd3RxcmFqIn0.sOxVgIVh_fn3RALCUSd7PQ';
       var map = L.mapbox.map('map', 'mapbox.pirates').setView(initialLocation, 3);;
@@ -517,7 +518,7 @@
             //$('#info').html('<p>An error has occurred</p>');
          },
          success: function(data) {
-            console.log("SUCESSS", data);
+            console.log("SUCESSS");
 
             data = JSON.parse(data);
             var markerData = [];
@@ -542,7 +543,7 @@
                                   return Math.random() * (max - min) + min;
                               }
 
-                              var newPirateLocation = [pirateBaseLocations[0] + getRandomNumber(0.01, 0.1), pirateBaseLocations[1] + getRandomNumber(0.01, 0.1)];
+                              var newPirateLocation = [pirateBaseLocations[0] - 2 + getRandomNumber(0.01, 0.1), pirateBaseLocations[1] + getRandomNumber(0.01, 0.1)];
 
                               markerData.push([newPirateLocation[0], newPirateLocation[1], repoName + " - " + loginName]);
                         }
@@ -565,16 +566,28 @@
 
             map.addLayer(markers);
 
-            var imageBounds = L.latLngBounds([[
+            var imageBounds1 = L.latLngBounds([[
                     pirateBaseLocations[0] + 5,
                     pirateBaseLocations[1] - 10
                 ], [
                     pirateBaseLocations[0] + 1,
                     pirateBaseLocations[1] + 10
                 ]]);
+
+            var imageBounds2 = L.latLngBounds([[
+                    pirateBaseLocations[0] + 1,
+                    pirateBaseLocations[1] - 10
+                ], [
+                    pirateBaseLocations[0] - 1,
+                    pirateBaseLocations[1] + 10
+                ]]);
             // map.fitBounds(imageBounds);
 
-            var overlay = L.imageOverlay(pirateMapURL, imageBounds).addTo(map).bringToFront();
+
+
+
+            var overlay1 = L.imageOverlay(pirateMapURL, imageBounds1).addTo(map).bringToFront();
+            var overlay2 = L.imageOverlay(subTextURL, imageBounds2).addTo(map).bringToFront();
 
             // Force refresh
             onmove();
