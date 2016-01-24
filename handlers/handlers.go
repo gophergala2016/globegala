@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"time"
 
 	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
 	"github.com/gophergala2016/globegala/geocoding"
@@ -46,6 +47,8 @@ func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 }
 
 func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
+	start := time.Now()
+
 	repos, err := github.FetchAllRepos()
 	if err != nil {
 		log.Fatal("err", err)
@@ -95,6 +98,8 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 	if err != nil {
 		fmt.Println("error:", err)
 	}
+
+	fmt.Printf("Passed Time %v:", time.Since(start))
 
 	fmt.Fprint(w, string(jsonRepo[:len(jsonRepo)]))
 }
