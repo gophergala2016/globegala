@@ -23,10 +23,6 @@ func main() {
 	router.GET("/", handlers.Index)
 	router.GET("/github/repos", handlers.GetGithubRepos)
 
-	router.GET("/test", func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
-		fmt.Fprint(w, "Test")
-	})
-
 	log.Printf("Server Started @ %s\n", port)
 	log.Fatal(http.ListenAndServe(":"+port, router))
 }
