@@ -46,7 +46,7 @@ func FetchAllRepos() (Repos, error) {
 	var wg sync.WaitGroup
 	wg.Add(7)
 
-	for page := 1; page <= 10; page++ {
+	for page := 1; page <= 7; page++ {
 		var repos Repos
 		reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s&page=%v", githubAPI, accessToken, page)
 
