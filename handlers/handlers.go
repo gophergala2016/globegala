@@ -54,35 +54,40 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 	allReposData := AllReposData{}
 	repoData := RepoData{}
 
-	for _, repo := range repos {
-		contributors, err := github.FetchAllContributors(repo.Name)
-		if err != nil {
-			fmt.Printf("FetchAllContributors: %v", err)
-		}
-
-		if len(contributors) == 0 {
-			continue
-		}
-
-		for _, contributor := range contributors {
-			c, err := github.FetchContributor(contributor.Login)
+	for i := range repos {
+		repo := repos[i]
+		go func() {
+			contributors, err := github.FetchAllContributors(repo.Name)
 			if err != nil {
-				fmt.Printf("FetchContributor: %v", err)
+				fmt.Printf("FetchAllContributors: %v", err)
 			}
 
-			g, err := geocoding.FetchLatLong(c.Location)
-			if err != nil {
-				fmt.Printf("FetchLatLong: %v", err)
+			if len(contributors) == 0 {
+				return
 			}
-			c.Geolocation = g
 
-			repoData.Contributors = append(repoData.Contributors, c)
+			for i := range contributors {
+				contributor := contributors[i]
+				go func() {
+					c, err := github.FetchContributor(contributor.Login)
+					if err != nil {
+						fmt.Printf("FetchContributor: %v", err)
+					}
 
-		}
-		repoData.Name = repo.Name
-		fmt.Fprintf(w, "%+v", repoData.Contributors)
+					g, err := geocoding.FetchLatLong(c.Location)
+					if err != nil {
+						fmt.Printf("FetchLatLong: %v", err)
+					}
+					c.Geolocation = g
 
-		allReposData.data = append(allReposData.data, repoData)
+					repoData.Contributors = append(repoData.Contributors, c)
+				}()
+			}
+			repoData.Name = repo.Name
+			fmt.Fprintf(w, "%+v", repoData.Contributors)
+
+			allReposData.data = append(allReposData.data, repoData)
+		}()
 	}
 
 	//fmt.Println(allReposData)
