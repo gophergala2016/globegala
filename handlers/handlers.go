@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"sync"
 	"time"
 
 	"github.com/gophergala2016/globegala/Godeps/_workspace/src/github.com/julienschmidt/httprouter"
@@ -51,7 +52,8 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 
 	repos, err := github.FetchAllRepos()
 	if err != nil {
-		log.Fatal("err", err)
+		fmt.Printf("Couldn't fetch repos: %v", err.Error())
+		return
 	}
 
 	allReposData := AllReposData{}
@@ -68,9 +70,14 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 			continue
 		}
 
+		var wg sync.WaitGroup
+		wg.Add(len(contributors))
+
 		for i := range contributors {
 			contributor := contributors[i]
 			go func() {
+				defer wg.Done()
+
 				c, err := github.FetchContributor(contributor.Login)
 				if err != nil {
 					fmt.Printf("FetchContributor: %v", err)
@@ -85,8 +92,11 @@ func GetGithubRepos(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 				repoData.Contributors = append(repoData.Contributors, c)
 			}()
 		}
+
+		wg.Wait()
+
 		repoData.Name = repo.Name
-		fmt.Fprintf(w, "%+v", repoData.Contributors)
+		// fmt.Fprintf(w, "%+v", repoData.Contributors)
 
 		allReposData.data = append(allReposData.data, repoData)
 	}

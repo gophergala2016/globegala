@@ -43,6 +43,8 @@ func FetchAllRepos() (Repos, error) {
 			return repos, err
 		}
 
+		fmt.Printf("%v", string(respBody))
+
 		if err := json.Unmarshal(respBody, &repos); err != nil {
 			return repos, fmt.Errorf("Unmarshal error: ", err)
 		}
