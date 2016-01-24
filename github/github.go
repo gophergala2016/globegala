@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"sync"
 
 	"github.com/gophergala2016/globegala/geocoding"
 	"github.com/gregjones/httpcache"
@@ -42,21 +43,31 @@ func CacheInit() {
 func FetchAllRepos() (Repos, error) {
 	var allRepos Repos
 
+	var wg sync.WaitGroup
+	wg.Add(7)
+
 	for page := 1; page <= 7; page++ {
 		var repos Repos
 		reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s&page=%v", githubAPI, accessToken, page)
 
-		respBody, err := doGetRequest(reqUrl)
-		if err != nil {
-			return repos, err
-		}
+		go func() (Repos, error) {
+			defer wg.Done()
+			respBody, err := doGetRequest(reqUrl)
+			if err != nil {
+				return repos, err
+			}
 
-		if err := json.Unmarshal(respBody, &repos); err != nil {
-			return repos, fmt.Errorf("Unmarshal error: ", err)
-		}
+			if err := json.Unmarshal(respBody, &repos); err != nil {
+				//return
+				return repos, fmt.Errorf("Unmarshal error: ", err)
+			}
 
-		allRepos = append(allRepos, repos...)
+			allRepos = append(allRepos, repos...)
+			return repos, nil
+		}()
 	}
+
+	wg.Wait()
 
 	return allRepos, nil
 }
