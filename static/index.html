@@ -7,6 +7,7 @@
     <script src='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.js'></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
     <link href='https://api.mapbox.com/mapbox.js/v2.2.4/mapbox.css' rel='stylesheet' />
+    <link rel="icon" type="image/png" href="./static/assets/img/gopherpirate-icon.png">
     <style>
       body { margin:0; padding:0; }
       #map { position:absolute; top:0; bottom:0; width:100%; }
@@ -507,7 +508,7 @@
 
       $.ajax({
          // url: 'http://localhost:8080',// /github/repos',
-         url: 'http://localhost:8080/github/repos',
+         url: '/github/repos',
          data: {
             format: 'json'
          },
