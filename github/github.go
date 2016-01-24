@@ -47,23 +47,24 @@ func FetchAllRepos() (Repos, error) {
 	wg.Add(7)
 
 	for page := 1; page <= 7; page++ {
-		var repos Repos
 		reqUrl := fmt.Sprintf("%s/orgs/gophergala2016/repos?access_token=%s&page=%v", githubAPI, accessToken, page)
 
-		go func() (Repos, error) {
+		go func() {
 			defer wg.Done()
+			var repos Repos
+
 			respBody, err := doGetRequest(reqUrl)
 			if err != nil {
-				return repos, err
+				fmt.Printf("Err: %v\n", err.Error())
+				return
 			}
 
 			if err := json.Unmarshal(respBody, &repos); err != nil {
-				//return
-				return repos, fmt.Errorf("Unmarshal error: ", err)
+				fmt.Printf("Unmarshal error: %v\n", err.Error())
+				return
 			}
 
 			allRepos = append(allRepos, repos...)
-			return repos, nil
 		}()
 	}
 
