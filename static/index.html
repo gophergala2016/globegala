@@ -151,7 +151,7 @@
                         var loginName = contributors[j]["login"];
                         var location = contributors[j]["locationName"]; // Not used
 
-                        var sidebarDataStyle = repoName + "(" + commitCount + ") - " + loginName;
+                        var sidebarDataStyle = repoName + "(" + commitCount + " commits) - by " + loginName;
 
                         if (contributors[j]["Geolocation"]["Results"].length > 0) {
                               var lat = contributors[j]["Geolocation"]["Results"][0]["Geometry"]["Location"]["lat"];
