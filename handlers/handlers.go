@@ -22,6 +22,7 @@ type AllReposData struct {
 type RepoData struct {
 	Name         string
 	Contributors []github.Contributor
+	Commits      int64
 }
 
 func Index(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
@@ -113,6 +114,12 @@ func getDataFromAPI() AllReposData {
 
 		wg.Wait()
 		repoData.Name = repo.Name
+
+		commits, err := github.FetchRepoCommits(repo.Name)
+		if err != nil {
+			fmt.Printf("FetchRepoCommits: %v", err)
+		}
+		repoData.Commits = int64(len(commits))
 
 		allReposData.data = append(allReposData.data, repoData)
 	}

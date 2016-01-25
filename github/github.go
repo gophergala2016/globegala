@@ -35,6 +35,8 @@ type Contributor struct {
 	Geolocation geocoding.Geolocation
 }
 
+type Commits []struct{}
+
 func CacheInit() {
 	t := httpcache.NewMemoryCacheTransport()
 	client = http.Client{Transport: t}
@@ -103,6 +105,31 @@ func FetchContributor(contributor string) (Contributor, error) {
 	}
 
 	return c, nil
+}
+
+func FetchRepoCommits(repo string) (Commits, error) {
+	var allCommits Commits
+	for page := 1; page < 10; page++ {
+		reqUrl := fmt.Sprintf("%s/repos/gophergala2016/%s/commits?access_token=%s&page=%v", githubAPI, repo, accessToken, page)
+
+		var c Commits
+		respBody, err := doGetRequest(reqUrl)
+		if err != nil {
+			return c, err
+		}
+
+		if err := json.Unmarshal(respBody, &c); err != nil {
+			return c, fmt.Errorf("Unmarshal error: %v", err)
+		}
+
+		if len(c) == 0 {
+			break
+		}
+
+		allCommits = append(allCommits, c...)
+	}
+
+	return allCommits, nil
 }
 
 func doGetRequest(reqUrl string) ([]byte, error) {
