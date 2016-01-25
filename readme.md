@@ -6,7 +6,7 @@ Globegala uses github API to get the data. You can view it at http://globegala.h
 
 #### Preview
 
-<img width="854" alt="screen shot 2016-01-24 at 4 25 30 pm" src="https://cloud.githubusercontent.com/assets/4488777/12540106/84bbdaf6-c2b7-11e5-8d5d-3c8b6a8b1d5b.png">
+<img width="967" alt="screen shot 2016-01-24 at 4 39 52 pm" src="https://cloud.githubusercontent.com/assets/4488777/12540177/33df813a-c2b9-11e5-991f-17f24873b78a.png">
 
 #### Running in Local
 
