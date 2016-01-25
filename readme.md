@@ -12,7 +12,7 @@ Globegala uses github API to get the data. You can view it at http://globegala.h
 
 1. `go get github.com/gophergala2016/globegala`  
 2. Set enviroment variable `EXPORT access_token=$YOUR_GITHUB_TOKEN (This is optional)
-3. To run the server `cd $GOPATH/github.com/gophergala2016/globegala` then `./run.sh`  
+3. To run the server `cd $GOPATH/src/github.com/gophergala2016/globegala` then `./run.sh`  
  
 #### Notes
 
