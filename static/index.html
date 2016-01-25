@@ -108,7 +108,7 @@
                         if(a.toLowerCase() > b.toLowerCase()) return 1;
                         return 0;
                   });
-                  sidebarItems = "Repo - Contributor\n================\n" + inBounds.join('\n');
+                  sidebarItems = "Repo - Contributor - Commit Count\n================\n" + inBounds.join('\n');
             }
 
             document.getElementById('sidebar').innerHTML = sidebarItems;
@@ -145,6 +145,7 @@
             for (var i = 0; i < data.length; i++) {
                   var repoName = data[i]["Name"];
                   var contributors = data[i]["Contributors"];
+                  var commitCount = data[i]["Commits"];
 
                   for (var j = 0; j < contributors.length; j++) {
                         var loginName = contributors[j]["login"];
@@ -164,7 +165,7 @@
 
                               var newPirateLocation = [pirateBaseLocations[0] - 2 + getRandomNumber(0.01, 0.1), pirateBaseLocations[1] + getRandomNumber(0.01, 0.1)];
 
-                              markerData.push([newPirateLocation[0], newPirateLocation[1], repoName + " - " + loginName]);
+                              markerData.push([newPirateLocation[0], newPirateLocation[1], repoName + " - " + loginName + " - " + commitCount]);
                         }
 
                   };
