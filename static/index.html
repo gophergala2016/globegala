@@ -108,7 +108,7 @@
                         if(a.toLowerCase() > b.toLowerCase()) return 1;
                         return 0;
                   });
-                  sidebarItems = "Repo - Contributor - Commit Count\n================\n" + inBounds.join('\n');
+                  sidebarItems = "Repo(Commits) - Contributor\n================\n" + inBounds.join('\n');
             }
 
             document.getElementById('sidebar').innerHTML = sidebarItems;
@@ -151,13 +151,13 @@
                         var loginName = contributors[j]["login"];
                         var location = contributors[j]["locationName"]; // Not used
 
+                        var sidebarDataStyle = repoName + "(" + commitCount + ") - " + loginName;
+
                         if (contributors[j]["Geolocation"]["Results"].length > 0) {
                               var lat = contributors[j]["Geolocation"]["Results"][0]["Geometry"]["Location"]["lat"];
                               var lng = contributors[j]["Geolocation"]["Results"][0]["Geometry"]["Location"]["lng"];
 
-                              // console.log("repoName", repoName," loginName ", loginName, " i ", i, " j ", j);
-
-                              markerData.push([lat, lng, repoName + " - " + loginName]);
+                              markerData.push([lat, lng, sidebarDataStyle]);
                         } else {
                               function getRandomNumber(min, max) {
                                   return Math.random() * (max - min) + min;
@@ -165,13 +165,12 @@
 
                               var newPirateLocation = [pirateBaseLocations[0] - 2 + getRandomNumber(0.01, 0.1), pirateBaseLocations[1] + getRandomNumber(0.01, 0.1)];
 
-                              markerData.push([newPirateLocation[0], newPirateLocation[1], repoName + " - " + loginName + " - " + commitCount]);
+
+                              markerData.push([newPirateLocation[0], newPirateLocation[1], sidebarDataStyle]);
                         }
 
                   };
             };
-
-            // console.log("MARKER DATA ", JSON.stringify(markerData));
 
             for (var i = 0; i < markerData.length; i++) {
                 var a = markerData[i];
