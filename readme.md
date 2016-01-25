@@ -1,6 +1,6 @@
 ## Globegala
 
-Shows all the gophergala2016 hackathon contributors in a world map.
+🌎 Shows all the gophergala2016 hackathon contributors in a world map.
 
 Globegala uses github API to get the data. You can view it at http://globegala.herokuapp.com/
 
